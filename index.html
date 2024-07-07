@@ -1,58 +1,415 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<style>
-.mindblowbutton {
-  font-size: 50px;
-  padding: 40px 100px;
-  border-radius: 200px;
-  background-color: #2ECC71;
-  color: white;
-  border: none;
-  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.3), 0 12px 40px 0 rgba(0,0,0,0.23);
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Activation Tester</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
-.mindblowbutton:active {
-  animation: pressDown 0.1s;
-}
-
-.mindblowbutton:hover {
-  animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes pressDown {
-  0% {
-    transform: scale(1);
-    box-shadow: none;
-  }
-  100% {
-    transform: scale(1.05);
-    box-shadow: 0 24px 64px 0 rgba(0,0,0,0.4), 0 32px 96px 0 rgba(0,0,0,0.25);
-  }
-}
-</style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #3d3d3d;
+            --card-background: #2d2d2d;
+            --text-color: #ffffff;
+            --border-color: #e0e0e0;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+        .container {
+            background-color: var(--card-background);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 100%;
+        }
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1.5rem;
+        }
+        @media (min-width: 600px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (min-width: 900px) {
+            .grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        .button-category {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            user-select: none;
+        }
+        .button-category:hover {
+            background-color: #393939;
+        }
+        h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        .button-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 5px;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 150px;
+            user-select: none;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .pushed {
+            background-color: var(--secondary-color) !important;
+            color: white;
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        .indicator {
+            width: 20px;
+            height: 20px;
+            margin-left: 15px;
+            background-color: var(--border-color);
+            transition: all 0.3s ease;
+            border-radius: 50%;
+        }
+        .indicator.active {
+            background-color: var(--secondary-color);
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+        }
+        input[type="number"] {
+            width: 60px;
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        #timerContainer {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        label {
+            font-size: 14px;
+            color: var(--text-color);
+        }
+        #logContainer {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: rgba(52, 152, 219, 0.05);
+            border-radius: 10px;
+            height: 150px;
+            overflow: hidden;
+            resize: vertical;
+            min-height: 100px;
+            max-height: 400px;
+        }
+        #logList {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            height: calc(100% - 30px);
+            overflow-y: auto;
+        }
+        #logList li {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        #logHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        #clearLog {
+            background-color: #e74c3c;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        #clearLog:hover {
+            background-color: #c0392b;
+        }
+    </style>
 </head>
-
 <body>
-<button class="mindblowbutton" onclick="changeColor()" type="button">Unleash the chaos!</button>
+    <div class="container">
+        <h1>Button Activation Tester</h1>
+        
+        <div class="grid">
+            <div class="button-category">
+                <h2>Instant Feedback</h2>
+                <div class="button-container">
+                    <button id="autoRelease">Auto Release</button>
+                    <div id="autoReleaseIndicator" class="indicator"></div>
+                </div>
+                <div class="button-container">
+                    <button id="normalActivation">Normal Activation</button>
+                    <div id="normalActivationIndicator" class="indicator"></div>
+                </div>
+            </div>
+            
+            <div class="button-category">
+                <h2>Timed Behavior</h2>
+                <div class="button-container">
+                    <button id="timerRelease">Timer Release</button>
+                    <div id="timerReleaseIndicator" class="indicator"></div>
+                </div>
+                <div id="timerContainer">
+                    <input type="number" id="timerDuration" min="1" value="5">
+                    <label for="timerDuration">seconds</label>
+                </div>
+            </div>
+            
+            <div class="button-category">
+                <h2>Toggled State</h2>
+                <div class="button-container">
+                    <button id="toggleButton">Toggle Button</button>
+                    <div id="toggleButtonIndicator" class="indicator"></div>
+                </div>
+            </div>
 
-<script>
-function changeColor() {
-  document.body.style.backgroundColor = "#" + Math.floor(Math.random()*16777215).toString(16);
-}
-</script>
+            <div class="button-category">
+                <h2>Double-Click</h2>
+                <div class="button-container">
+                    <button id="doubleClickButton">Double-Click</button>
+                    <div id="doubleClickIndicator" class="indicator"></div>
+                </div>
+            </div>
 
+            <div class="button-category">
+                <h2>Long Press</h2>
+                <div class="button-container">
+                    <button id="longPressButton">Long Press</button>
+                    <div id="longPressIndicator" class="indicator"></div>
+                </div>
+            </div>
+
+            <div class="button-category">
+                <h2>Hover Activation (mouse)</h2>
+                <div class="button-container">
+                    <button id="hoverButton">Hover</button>
+                    <div id="hoverIndicator" class="indicator"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="logContainer">
+            <div id="logHeader">
+                <h2>Action Log</h2>
+                <button id="clearLog">Clear Log</button>
+            </div>
+            <ul id="logList"></ul>
+        </div>
+    </div>
+
+    <script>
+        function setIndicator(buttonId, active) {
+            const indicator = document.getElementById(buttonId + 'Indicator');
+            if (active) {
+                indicator.classList.add('active');
+            } else {
+                indicator.classList.remove('active');
+            }
+        }
+
+        function logAction(action) {
+            const logList = document.getElementById('logList');
+            const logItem = document.createElement('li');
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { hour12: false, 
+                hour: '2-digit', minute:'2-digit', second:'2-digit', fractionalSecondDigits: 3 });
+            logItem.textContent = `${timeString} - ${action}`;
+            logList.insertBefore(logItem, logList.firstChild);
+        }
+
+        // Clear log functionality
+        document.getElementById('clearLog').addEventListener('click', function() {
+            document.getElementById('logList').innerHTML = '';
+        });
+
+        // Auto Release Button
+        document.getElementById('autoRelease').addEventListener('mousedown', function() {
+            this.classList.add('pushed');
+            setIndicator('autoRelease', true);
+            logAction('Auto Release: Mouse Down');
+            setTimeout(() => {
+                this.classList.remove('pushed');
+                setIndicator('autoRelease', false);
+                logAction('Auto Release: Auto Up');
+            }, 200);
+        });
+
+        // Normal Activation Button
+        const normalActivation = document.getElementById('normalActivation');
+        normalActivation.addEventListener('mousedown', function() {
+            this.classList.add('pushed');
+            setIndicator('normalActivation', true);
+            logAction('Normal Activation: Mouse Down');
+        });
+        normalActivation.addEventListener('mouseup', function() {
+            this.classList.remove('pushed');
+            setIndicator('normalActivation', false);
+            logAction('Normal Activation: Mouse Up');
+        });
+        normalActivation.addEventListener('mouseleave', function() {
+            if (this.classList.contains('pushed')) {
+                this.classList.remove('pushed');
+                setIndicator('normalActivation', false);
+                logAction('Normal Activation: Mouse Leave');
+            }
+        });
+
+        // Timer Release Button
+        const timerReleaseBtn = document.getElementById('timerRelease');
+        const timerDurationInput = document.getElementById('timerDuration');
+        
+        timerReleaseBtn.addEventListener('click', function() {
+            if (!this.classList.contains('pushed')) {
+                const duration = parseInt(timerDurationInput.value, 10) * 1000; // Convert to milliseconds
+                this.classList.add('pushed');
+                setIndicator('timerRelease', true);
+                logAction(`Timer Release: Activated (${timerDurationInput.value}s)`);
+                setTimeout(() => {
+                    this.classList.remove('pushed');
+                    setIndicator('timerRelease', false);
+                    logAction('Timer Release: Deactivated');
+                }, duration);
+            }
+        });
+
+        // Toggle Button
+        document.getElementById('toggleButton').addEventListener('click', function() {
+            this.classList.toggle('pushed');
+            const isActive = this.classList.contains('pushed');
+            setIndicator('toggleButton', isActive);
+            logAction(`Toggle Button: ${isActive ? 'Activated' : 'Deactivated'}`);
+        });
+
+        // Double-Click Button
+        const doubleClickButton = document.getElementById('doubleClickButton');
+        let lastClickTime = 0;
+        doubleClickButton.addEventListener('click', function() {
+            const currentTime = new Date().getTime();
+            logAction('Double-Click: Single Click');
+            if (currentTime - lastClickTime < 300) {
+                this.classList.add('pushed');
+                setIndicator('doubleClick', true);
+                logAction('Double-Click: Activated');
+                setTimeout(() => {
+                    this.classList.remove('pushed');
+                    setIndicator('doubleClick', false);
+                    logAction('Double-Click: Deactivated');
+                }, 500);
+            }
+            lastClickTime = currentTime;
+        });
+
+        // Long Press Button
+        const longPressButton = document.getElementById('longPressButton');
+        let pressTimer;
+        longPressButton.addEventListener('mousedown', function(event) {
+            event.preventDefault();
+            logAction('Long Press: Mouse Down');
+            pressTimer = setTimeout(() => {
+                this.classList.add('pushed');
+                setIndicator('longPress', true);
+                logAction('Long Press: Activated');
+            }, 1000);
+        });
+        longPressButton.addEventListener('touchstart', function(event) {
+            event.preventDefault();
+            logAction('Long Press: Touch Start');
+            pressTimer = setTimeout(() => {
+                this.classList.add('pushed');
+                setIndicator('longPress', true);
+                logAction('Long Press: Activated');
+            }, 1000);
+        });
+        longPressButton.addEventListener('mouseup', function() {
+            clearTimeout(pressTimer);
+            if (this.classList.contains('pushed')) {
+                this.classList.remove('pushed');
+                setIndicator('longPress', false);
+                logAction('Long Press: Mouse Up (After Activation)');
+            } else {
+                logAction('Long Press: Mouse Up (Before Activation)');
+            }
+        });
+        longPressButton.addEventListener('touchend', function() {
+            clearTimeout(pressTimer);
+            if (this.classList.contains('pushed')) {
+                this.classList.remove('pushed');
+                setIndicator('longPress', false);
+                logAction('Long Press: Touch End (After Activation)');
+            } else {
+                logAction('Long Press: Touch End (Before Activation)');
+            }
+        });
+        longPressButton.addEventListener('mouseleave', function() {
+            clearTimeout(pressTimer);
+            if (this.classList.contains('pushed')) {
+                this.classList.remove('pushed');
+                setIndicator('longPress', false);
+                logAction('Long Press: Mouse Leave (After Activation)');
+            } else {
+                logAction('Long Press: Mouse Leave (Before Activation)');
+            }
+        });
+
+        // Hover Activation Button
+        const hoverButton = document.getElementById('hoverButton');
+        hoverButton.addEventListener('mouseenter', function() {
+            this.classList.add('pushed');
+            setIndicator('hover', true);
+            logAction('Hover: Mouse Enter');
+        });
+        hoverButton.addEventListener('mouseleave', function() {
+            this.classList.remove('pushed');
+            setIndicator('hover', false);
+            logAction('Hover: Mouse Leave');
+        });
+    </script>
 </body>
 </html>
