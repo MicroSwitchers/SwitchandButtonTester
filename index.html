@@ -5,21 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Button Activation Tester</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
         :root {
             --primary-color: #3498db;
             --secondary-color: #2ecc71;
-            --background-color: #f0f0f0;
-            --card-background: #ffffff;
-            --text-color: #333333;
+            --background-color: #2c2c2c;
+            --card-background: #424242;
+            --text-color: #e0e0e0;
             --border-color: #e0e0e0;
         }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Roboto', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
             background-color: var(--background-color);
             color: var(--text-color);
         }
@@ -55,20 +61,21 @@
             }
         }
         .button-category {
-            background-color: rgba(52, 152, 219, 0.05);
+            background-color: var(--card-background);
             border-radius: 10px;
             padding: 1rem;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             user-select: none;
         }
         .button-category:hover {
-            background-color: rgba(52, 152, 219, 0.1);
+            background-color: #3e3d3d;
         }
         h2 {
             color: var(--primary-color);
             margin-top: 0;
             margin-bottom: 1rem;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             border-bottom: 2px solid var(--border-color);
             padding-bottom: 0.5rem;
         }
@@ -263,36 +270,38 @@
         });
 
         // Auto Release Button
-        document.getElementById('autoRelease').addEventListener('mousedown', function() {
-            this.classList.add('pushed');
+        function autoReleaseHandler() {
+            const button = document.getElementById('autoRelease');
+            button.classList.add('pushed');
             setIndicator('autoRelease', true);
-            logAction('Auto Release: Mouse Down');
+            logAction('Auto Release: Activated');
             setTimeout(() => {
-                this.classList.remove('pushed');
+                button.classList.remove('pushed');
                 setIndicator('autoRelease', false);
-                logAction('Auto Release: Auto Up');
-            }, 200);
-        });
+                logAction('Auto Release: Released');
+            }, 500);
+        }
+        const autoReleaseButton = document.getElementById('autoRelease');
+        autoReleaseButton.addEventListener('mousedown', autoReleaseHandler);
+        autoReleaseButton.addEventListener('touchstart', autoReleaseHandler);
 
         // Normal Activation Button
         const normalActivation = document.getElementById('normalActivation');
-        normalActivation.addEventListener('mousedown', function() {
-            this.classList.add('pushed');
+        function normalActivationDown() {
+            normalActivation.classList.add('pushed');
             setIndicator('normalActivation', true);
-            logAction('Normal Activation: Mouse Down');
-        });
-        normalActivation.addEventListener('mouseup', function() {
-            this.classList.remove('pushed');
+            logAction('Normal Activation: Pressed');
+        }
+        function normalActivationUp() {
+            normalActivation.classList.remove('pushed');
             setIndicator('normalActivation', false);
-            logAction('Normal Activation: Mouse Up');
-        });
-        normalActivation.addEventListener('mouseleave', function() {
-            if (this.classList.contains('pushed')) {
-                this.classList.remove('pushed');
-                setIndicator('normalActivation', false);
-                logAction('Normal Activation: Mouse Leave');
-            }
-        });
+            logAction('Normal Activation: Released');
+        }
+        normalActivation.addEventListener('mousedown', normalActivationDown);
+        normalActivation.addEventListener('mouseup', normalActivationUp);
+        normalActivation.addEventListener('touchstart', normalActivationDown);
+        normalActivation.addEventListener('touchend', normalActivationUp);
+        normalActivation.addEventListener('mouseleave', normalActivationUp);
 
         // Timer Release Button
         const timerReleaseBtn = document.getElementById('timerRelease');
@@ -342,54 +351,30 @@
         // Long Press Button
         const longPressButton = document.getElementById('longPressButton');
         let pressTimer;
-        longPressButton.addEventListener('mousedown', function(event) {
+        function longPressStart(event) {
             event.preventDefault();
-            logAction('Long Press: Mouse Down');
+            logAction('Long Press: Start');
             pressTimer = setTimeout(() => {
-                this.classList.add('pushed');
+                longPressButton.classList.add('pushed');
                 setIndicator('longPress', true);
                 logAction('Long Press: Activated');
             }, 1000);
-        });
-        longPressButton.addEventListener('touchstart', function(event) {
-            event.preventDefault();
-            logAction('Long Press: Touch Start');
-            pressTimer = setTimeout(() => {
-                this.classList.add('pushed');
-                setIndicator('longPress', true);
-                logAction('Long Press: Activated');
-            }, 1000);
-        });
-        longPressButton.addEventListener('mouseup', function() {
+        }
+        function longPressEnd() {
             clearTimeout(pressTimer);
-            if (this.classList.contains('pushed')) {
-                this.classList.remove('pushed');
+            if (longPressButton.classList.contains('pushed')) {
+                longPressButton.classList.remove('pushed');
                 setIndicator('longPress', false);
-                logAction('Long Press: Mouse Up (After Activation)');
+                logAction('Long Press: End (After Activation)');
             } else {
-                logAction('Long Press: Mouse Up (Before Activation)');
+                logAction('Long Press: End (Before Activation)');
             }
-        });
-        longPressButton.addEventListener('touchend', function() {
-            clearTimeout(pressTimer);
-            if (this.classList.contains('pushed')) {
-                this.classList.remove('pushed');
-                setIndicator('longPress', false);
-                logAction('Long Press: Touch End (After Activation)');
-            } else {
-                logAction('Long Press: Touch End (Before Activation)');
-            }
-        });
-        longPressButton.addEventListener('mouseleave', function() {
-            clearTimeout(pressTimer);
-            if (this.classList.contains('pushed')) {
-                this.classList.remove('pushed');
-                setIndicator('longPress', false);
-                logAction('Long Press: Mouse Leave (After Activation)');
-            } else {
-                logAction('Long Press: Mouse Leave (Before Activation)');
-            }
-        });
+        }
+        longPressButton.addEventListener('mousedown', longPressStart);
+        longPressButton.addEventListener('touchstart', longPressStart);
+        longPressButton.addEventListener('mouseup', longPressEnd);
+        longPressButton.addEventListener('touchend', longPressEnd);
+        longPressButton.addEventListener('mouseleave', longPressEnd);
 
         // Hover Activation Button
         const hoverButton = document.getElementById('hoverButton');
