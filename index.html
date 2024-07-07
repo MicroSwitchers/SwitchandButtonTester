@@ -59,6 +59,7 @@
             border-radius: 10px;
             padding: 1rem;
             transition: all 0.3s ease;
+            user-select: none;
         }
         .button-category:hover {
             background-color: rgba(52, 152, 219, 0.1);
@@ -87,6 +88,7 @@
             transition: all 0.3s ease;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             width: 150px;
+            user-select: none;
         }
         button:hover {
             background-color: #2980b9;
@@ -218,7 +220,7 @@
             </div>
 
             <div class="button-category">
-                <h2>Hover Activation</h2>
+                <h2>Hover Activation (mouse)</h2>
                 <div class="button-container">
                     <button id="hoverButton">Hover</button>
                     <div id="hoverIndicator" class="indicator"></div>
@@ -340,8 +342,18 @@
         // Long Press Button
         const longPressButton = document.getElementById('longPressButton');
         let pressTimer;
-        longPressButton.addEventListener('mousedown', function() {
+        longPressButton.addEventListener('mousedown', function(event) {
+            event.preventDefault();
             logAction('Long Press: Mouse Down');
+            pressTimer = setTimeout(() => {
+                this.classList.add('pushed');
+                setIndicator('longPress', true);
+                logAction('Long Press: Activated');
+            }, 1000);
+        });
+        longPressButton.addEventListener('touchstart', function(event) {
+            event.preventDefault();
+            logAction('Long Press: Touch Start');
             pressTimer = setTimeout(() => {
                 this.classList.add('pushed');
                 setIndicator('longPress', true);
@@ -356,6 +368,16 @@
                 logAction('Long Press: Mouse Up (After Activation)');
             } else {
                 logAction('Long Press: Mouse Up (Before Activation)');
+            }
+        });
+        longPressButton.addEventListener('touchend', function() {
+            clearTimeout(pressTimer);
+            if (this.classList.contains('pushed')) {
+                this.classList.remove('pushed');
+                setIndicator('longPress', false);
+                logAction('Long Press: Touch End (After Activation)');
+            } else {
+                logAction('Long Press: Touch End (Before Activation)');
             }
         });
         longPressButton.addEventListener('mouseleave', function() {
