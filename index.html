@@ -4,253 +4,263 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Button Activation Tester</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for better typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-
+        /* Custom CSS for a refined and dynamic look */
         :root {
-            --primary-color: #3498db;
-            --secondary-color: #2ecc71;
-            --background-color: #2c2c2c;
-            --card-background: #424242;
-            --text-color: #e0e0e0;
-            --border-color: #e0e0e0;
+            --bg-color: #0c111d; /* A deeper space blue */
+            --card-color: rgba(31, 41, 55, 0.5); 
+            --primary-color: #38bdf8; /* Tailwind sky-400 */
+            --secondary-color: #34d399; /* Tailwind emerald-400 */
+            --danger-color: #fb7185; /* Tailwind rose-400 */
+            --text-color: #d1d5db; /* Tailwind gray-300 */
+            --border-color: rgba(55, 65, 81, 0.6);
         }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+
         body {
-            font-family: 'Roboto', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: var(--background-color);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.1), transparent 30%),
+                              radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 100% 100%, 20px 20px;
             color: var(--text-color);
+            overflow-x: hidden; /* Prevent horizontal scrollbars */
         }
-        .container {
-            background-color: var(--card-background);
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            max-width: 900px;
-            width: 100%;
+
+        /* Interactive spotlight that follows the mouse */
+        #spotlight-container {
+            position: relative;
+            isolation: isolate; /* Create new stacking context */
         }
-        h1 {
-            color: var(--primary-color);
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        #spotlight-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), rgba(56, 189, 248, 0.2), transparent 80%);
+            z-index: -1;
+            border-radius: inherit;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-out;
         }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(1, 1fr);
-            gap: 1.5rem;
+        #spotlight-container:hover::before {
+            opacity: 1;
         }
-        @media (min-width: 600px) {
-            .grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+
+        /* Glassmorphism effect for the main container */
+        .glass-container {
+            background: var(--card-color);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
         }
-        @media (min-width: 900px) {
-            .grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
+
+        /* Enhanced card styles with 3D tilt effect */
+        .category-card {
+            transform-style: preserve-3d;
+            transition: transform 0.1s linear, border-color 0.3s, box-shadow 0.3s;
         }
-        .button-category {
-            background-color: var(--card-background);
-            border-radius: 10px;
-            padding: 1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            user-select: none;
+        .category-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.3);
         }
-        .button-category:hover {
-            background-color: #3e3d3d;
+        
+        .btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        h2 {
-            color: var(--primary-color);
-            margin-top: 0;
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 0.5rem;
-        }
-        .button-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 14px;
-            cursor: pointer;
-            background-color: var(--primary-color);
-            border: none;
-            border-radius: 5px;
-            color: white;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            width: 150px;
-            user-select: none;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        .pushed {
+        .btn:hover { transform: translateY(-2px); }
+        .btn.pushed {
             background-color: var(--secondary-color) !important;
-            color: white;
+            color: #111827;
             transform: translateY(1px);
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-        .indicator {
-            width: 20px;
-            height: 20px;
-            margin-left: 15px;
-            background-color: var(--border-color);
-            transition: all 0.3s ease;
-            border-radius: 50%;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.2);
         }
         .indicator.active {
             background-color: var(--secondary-color);
-            box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+            box-shadow: 0 0 12px 2px var(--secondary-color);
         }
-        input[type="number"] {
-            width: 60px;
-            padding: 8px;
-            margin-right: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            font-size: 14px;
+        
+        /* Custom scrollbar */
+        #logList::-webkit-scrollbar { width: 8px; }
+        #logList::-webkit-scrollbar-track { background: rgba(55, 65, 81, 0.3); border-radius: 10px; }
+        #logList::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 10px; }
+        #logList::-webkit-scrollbar-thumb:hover { background: #60a5fa; }
+        
+        /* Entrance animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        #timerContainer {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-        }
-        label {
-            font-size: 14px;
-            color: var(--text-color);
-        }
-        #logContainer {
-            margin-top: 2rem;
-            padding: 1rem;
-            background-color: rgba(52, 152, 219, 0.05);
-            border-radius: 10px;
-            height: 150px;
-            overflow: hidden;
-            resize: vertical;
-            min-height: 100px;
-            max-height: 400px;
-        }
-        #logList {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            height: calc(100% - 30px);
-            overflow-y: auto;
-        }
-        #logList li {
-            margin-bottom: 5px;
-            font-size: 14px;
-        }
-        #logHeader {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        #clearLog {
-            background-color: #e74c3c;
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-        #clearLog:hover {
-            background-color: #c0392b;
+        .fade-in-up {
+            animation: fadeInUp 0.7s both cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>Button Activation Tester</h1>
-        
-        <div class="grid">
-            <div class="button-category">
-                <h2>Instant Feedback</h2>
-                <div class="button-container">
-                    <button id="autoRelease">Auto Release</button>
-                    <div id="autoReleaseIndicator" class="indicator"></div>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div id="spotlight-container" class="w-full max-w-6xl p-6 sm:p-8 rounded-2xl glass-container">
+        <!-- Header Section -->
+        <header class="text-center mb-10 fade-in-up" style="animation-delay: 0.1s;">
+            <div class="inline-block bg-gray-800/50 p-3 rounded-xl border border-gray-700/60 mb-4">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-sky-400"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"></path><path d="M13 13l6 6"></path></svg>
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-sky-300">
+                HID Interaction Tester
+            </h1>
+            <p class="mt-3 text-gray-400 max-w-3xl mx-auto">
+                A tool for prototyping and testing various button interactions for Human Interface Device (HID) projects. All controls are accessible and provide real-time feedback in the log below.
+            </p>
+        </header>
+
+        <!-- Grid of Button Categories -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style="perspective: 1000px;">
+            <!-- Category Card: Instant Feedback -->
+            <div class="category-card bg-gray-800/50 p-5 rounded-xl border border-gray-700/60 fade-in-up" style="animation-delay: 0.2s;">
+                <h2 class="text-lg font-semibold text-sky-300 mb-4">Instant Feedback</h2>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <button id="autoRelease" class="btn w-full text-left bg-sky-500/80 hover:bg-sky-500 text-white font-medium py-2.5 px-4 rounded-lg flex items-center gap-3">
+                            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2z"></polyline></svg>
+                            Auto Release
+                        </button>
+                        <div id="autoReleaseIndicator" class="indicator w-5 h-5 ml-4 bg-gray-600 rounded-full transition-all duration-300 shrink-0"><span class="sr-only">Inactive</span></div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button id="normalActivation" aria-pressed="false" class="btn w-full text-left bg-sky-500/80 hover:bg-sky-500 text-white font-medium py-2.5 px-4 rounded-lg flex items-center gap-3">
+                            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"></path><path d="M13 13l6 6"></path></svg>
+                            Normal Press
+                        </button>
+                        <div id="normalActivationIndicator" class="indicator w-5 h-5 ml-4 bg-gray-600 rounded-full transition-all duration-300 shrink-0"><span class="sr-only">Inactive</span></div>
+                    </div>
                 </div>
-                <div class="button-container">
-                    <button id="normalActivation">Normal Activation</button>
-                    <div id="normalActivationIndicator" class="indicator"></div>
+            </div>
+
+            <!-- Category Card: Timed Behavior -->
+            <div class="category-card bg-gray-800/50 p-5 rounded-xl border border-gray-700/60 fade-in-up" style="animation-delay: 0.3s;">
+                <h2 class="text-lg font-semibold text-sky-300 mb-4">Timed Behavior</h2>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <button id="timerRelease" class="btn w-full text-left bg-sky-500/80 hover:bg-sky-500 text-white font-medium py-2.5 px-4 rounded-lg flex items-center gap-3">
+                           <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2h4"/><path d="M12 14v-4"/><path d="M4 14a8 8 0 0 1 16 0H4Z"/><path d="M6 20h12"/></svg>
+                            Timer Release
+                        </button>
+                        <div id="timerReleaseIndicator" class="indicator w-5 h-5 ml-4 bg-gray-600 rounded-full transition-all duration-300 shrink-0"><span class="sr-only">Inactive</span></div>
+                    </div>
+                    <div class="flex items-center gap-2 bg-gray-900/50 p-2 rounded-lg">
+                        <label for="timerDuration" class="sr-only">Timer duration in seconds</label>
+                        <input type="number" id="timerDuration" min="1" value="3" class="w-full bg-transparent text-white text-center font-medium p-1 rounded focus:outline-none focus:ring-2 focus:ring-sky-400">
+                        <span class="text-sm text-gray-400 pr-1" aria-hidden="true">seconds</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Card: Toggled State -->
+            <div class="category-card bg-gray-800/50 p-5 rounded-xl border border-gray-700/60 fade-in-up" style="animation-delay: 0.4s;">
+                <h2 class="text-lg font-semibold text-sky-300 mb-4">Toggled State</h2>
+                <div class="space-y-5">
+                    <div class="flex items-center justify-between">
+                        <button id="toggleButton" role="switch" aria-checked="false" class="btn w-full text-left bg-sky-500/80 hover:bg-sky-500 text-white font-medium py-2.5 px-4 rounded-lg flex items-center gap-3">
+                            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="5" width="22" height="14" rx="7" ry="7"></rect><circle cx="8" cy="12" r="3"></circle></svg>
+                            Toggle Button
+                        </button>
+                        <div id="toggleButtonIndicator" class="indicator w-5 h-5 ml-4 bg-gray-600 rounded-full transition-all duration-300 shrink-0"><span class="sr-only">Inactive</span></div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label for="uiToggle" class="font-medium text-white cursor-pointer">UI Toggle Switch</label>
+                        <div class="flex items-center">
+                           <label for="uiToggle" class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="uiToggle" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-sky-500/50 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-500"></div>
+                            </label>
+                            <div id="uiToggleIndicator" class="indicator w-5 h-5 ml-4 bg-gray-600 rounded-full transition-all duration-300 shrink-0"><span class="sr-only">Inactive</span></div>
+                        </div>
+                    </div>
+                     <div class="flex items-center justify-between pt-5 border-t border-gray-700/60">
+                        <label for="uiCheckbox" class="font-medium text-white cursor-pointer">Standard Checkbox</label>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="uiCheckbox" class="sr-only peer">
+                            <label for="uiCheckbox" class="relative flex items-center justify-center w-6 h-6 bg-gray-600 rounded-md cursor-pointer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-sky-500/50 peer-checked:bg-sky-500 peer-checked:border-sky-500 transition-colors">
+                                <svg class="w-4 h-4 text-white opacity-0 peer-checked:opacity-100 transition-opacity" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </label>
+                            <div id="uiCheckboxIndicator" class="indicator w-5 h-5 ml-4 bg-gray-600 rounded-full transition-all duration-300 shrink-0"><span class="sr-only">Inactive</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Card: Clicks & Presses -->
+            <div class="category-card bg-gray-800/50 p-5 rounded-xl border border-gray-700/60 fade-in-up" style="animation-delay: 0.5s;">
+                <h2 class="text-lg font-semibold text-sky-300 mb-4">Clicks & Presses</h2>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <button id="doubleClickButton" class="btn w-full text-left bg-sky-500/80 hover:bg-sky-500 text-white font-medium py-2.5 px-4 rounded-lg flex items-center gap-3">
+                            <div class="flex items-center gap-1 text-white" aria-hidden="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"></path><path d="M13 13l6 6"></path></svg>
+                                <span class="font-bold text-sm self-center">x2</span>
+                            </div>
+                            Double-Click
+                        </button>
+                        <div id="doubleClickIndicator" class="indicator w-5 h-5 ml-4 bg-gray-600 rounded-full transition-all duration-300 shrink-0"><span class="sr-only">Inactive</span></div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button id="longPressButton" aria-pressed="false" class="btn w-full text-left bg-sky-500/80 hover:bg-sky-500 text-white font-medium py-2.5 px-4 rounded-lg flex items-center gap-3">
+                            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
+                            Long Press
+                        </button>
+                        <div id="longPressIndicator" class="indicator w-5 h-5 ml-4 bg-gray-600 rounded-full transition-all duration-300 shrink-0"><span class="sr-only">Inactive</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Card: Mouse Hover -->
+            <div class="category-card bg-gray-800/50 p-5 rounded-xl border border-gray-700/60 fade-in-up" style="animation-delay: 0.6s;">
+                <h2 class="text-lg font-semibold text-sky-300 mb-4">Mouse-Only</h2>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <button id="hoverButton" class="btn w-full text-left bg-sky-500/80 hover:bg-sky-500 text-white font-medium py-2.5 px-4 rounded-lg flex items-center gap-3">
+                            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>
+                            Hover Activate
+                        </button>
+                        <div id="hoverIndicator" class="indicator w-5 h-5 ml-4 bg-gray-600 rounded-full transition-all duration-300 shrink-0"><span class="sr-only">Inactive</span></div>
+                    </div>
                 </div>
             </div>
             
-            <div class="button-category">
-                <h2>Timed Behavior</h2>
-                <div class="button-container">
-                    <button id="timerRelease">Timer Release</button>
-                    <div id="timerReleaseIndicator" class="indicator"></div>
-                </div>
-                <div id="timerContainer">
-                    <input type="number" id="timerDuration" min="1" value="5">
-                    <label for="timerDuration">seconds</label>
-                </div>
-            </div>
-            
-            <div class="button-category">
-                <h2>Toggled State</h2>
-                <div class="button-container">
-                    <button id="toggleButton">Toggle Button</button>
-                    <div id="toggleButtonIndicator" class="indicator"></div>
-                </div>
-            </div>
-
-            <div class="button-category">
-                <h2>Double-Click</h2>
-                <div class="button-container">
-                    <button id="doubleClickButton">Double-Click</button>
-                    <div id="doubleClickIndicator" class="indicator"></div>
-                </div>
-            </div>
-
-            <div class="button-category">
-                <h2>Long Press</h2>
-                <div class="button-container">
-                    <button id="longPressButton">Long Press</button>
-                    <div id="longPressIndicator" class="indicator"></div>
-                </div>
-            </div>
-
-            <div class="button-category">
-                <h2>Hover Activation (mouse)</h2>
-                <div class="button-container">
-                    <button id="hoverButton">Hover</button>
-                    <div id="hoverIndicator" class="indicator"></div>
-                </div>
-            </div>
+            <div class="hidden lg:block"></div>
         </div>
 
-        <div id="logContainer">
-            <div id="logHeader">
-                <h2>Action Log</h2>
-                <button id="clearLog">Clear Log</button>
+        <!-- Action Log Section -->
+        <div class="mt-8 fade-in-up" style="animation-delay: 0.7s;">
+            <div class="flex justify-between items-center mb-3 pb-3 border-b border-gray-700/60">
+                <h2 class="text-lg font-semibold text-white">Action Log</h2>
+                <button id="clearLog" class="btn bg-rose-500/80 hover:bg-rose-500 text-white text-sm font-medium py-1.5 px-4 rounded-lg">Clear Log</button>
             </div>
-            <ul id="logList"></ul>
+            <div id="logContainer" class="bg-gray-900/70 p-4 rounded-lg h-48 min-h-[100px] max-h-[400px] overflow-hidden resize-y border border-gray-700/60">
+                <ul id="logList" class="h-full overflow-y-auto text-sm" aria-live="polite">
+                </ul>
+            </div>
         </div>
     </div>
 
     <script>
-        function setIndicator(buttonId, active) {
-            const indicator = document.getElementById(buttonId + 'Indicator');
-            if (active) {
-                indicator.classList.add('active');
-            } else {
-                indicator.classList.remove('active');
+        // --- UTILITY FUNCTIONS ---
+        function setIndicator(elementId, active) {
+            const indicator = document.getElementById(elementId + 'Indicator');
+            if (indicator) {
+                const srText = indicator.querySelector('.sr-only');
+                if (active) { 
+                    indicator.classList.add('active');
+                    if(srText) srText.textContent = 'Active';
+                } else { 
+                    indicator.classList.remove('active'); 
+                    if(srText) srText.textContent = 'Inactive';
+                }
             }
         }
 
@@ -258,136 +268,196 @@
             const logList = document.getElementById('logList');
             const logItem = document.createElement('li');
             const now = new Date();
-            const timeString = now.toLocaleTimeString('en-US', { hour12: false, 
-                hour: '2-digit', minute:'2-digit', second:'2-digit', fractionalSecondDigits: 3 });
-            logItem.textContent = `${timeString} - ${action}`;
+            const timeString = now.toLocaleTimeString('en-US', {
+                hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3
+            });
+            logItem.className = 'flex items-start gap-3 mb-2 font-mono';
+            logItem.innerHTML = `<span class="text-sky-400/80">${timeString}</span> <span class="text-gray-400">-</span> <span class="flex-1">${action}</span>`;
             logList.insertBefore(logItem, logList.firstChild);
         }
-
-        // Clear log functionality
+        
         document.getElementById('clearLog').addEventListener('click', function() {
             document.getElementById('logList').innerHTML = '';
+            logAction('Log cleared.');
+        });
+        
+        // --- DYNAMIC UI EFFECTS ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Spotlight effect
+            const spotlightContainer = document.getElementById('spotlight-container');
+            spotlightContainer.addEventListener('mousemove', e => {
+                const rect = spotlightContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                spotlightContainer.style.setProperty('--mouse-x', `${x}px`);
+                spotlightContainer.style.setProperty('--mouse-y', `${y}px`);
+            });
+
+            // 3D card tilt effect
+            const cards = document.querySelectorAll('.category-card');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const { width, height } = rect;
+                    const rotateX = (y / height - 0.5) * -15; // Max 7.5 deg tilt
+                    const rotateY = (x / width - 0.5) * 15;   // Max 7.5 deg tilt
+                    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'rotateX(0) rotateY(0) scale(1)';
+                });
+            });
         });
 
-        // Auto Release Button
-        function autoReleaseHandler() {
-            const button = document.getElementById('autoRelease');
-            button.classList.add('pushed');
+
+        // --- BUTTON EVENT LISTENERS ---
+        // 1. Auto Release Button
+        const autoReleaseButton = document.getElementById('autoRelease');
+        const autoReleaseHandler = () => {
+            autoReleaseButton.classList.add('pushed');
             setIndicator('autoRelease', true);
             logAction('Auto Release: Activated');
             setTimeout(() => {
-                button.classList.remove('pushed');
+                autoReleaseButton.classList.remove('pushed');
                 setIndicator('autoRelease', false);
-                logAction('Auto Release: Released');
+                logAction('Auto Release: Released (auto)');
             }, 500);
-        }
-        const autoReleaseButton = document.getElementById('autoRelease');
+        };
         autoReleaseButton.addEventListener('mousedown', autoReleaseHandler);
-        autoReleaseButton.addEventListener('touchstart', autoReleaseHandler);
+        autoReleaseButton.addEventListener('touchstart', autoReleaseHandler, { passive: true });
 
-        // Normal Activation Button
+        // 2. Normal Activation Button
         const normalActivation = document.getElementById('normalActivation');
-        function normalActivationDown() {
+        const normalActivationDown = () => {
             normalActivation.classList.add('pushed');
+            normalActivation.setAttribute('aria-pressed', 'true');
             setIndicator('normalActivation', true);
             logAction('Normal Activation: Pressed');
-        }
-        function normalActivationUp() {
-            normalActivation.classList.remove('pushed');
-            setIndicator('normalActivation', false);
-            logAction('Normal Activation: Released');
-        }
+        };
+        const normalActivationUp = () => {
+            if (normalActivation.classList.contains('pushed')) {
+                normalActivation.classList.remove('pushed');
+                normalActivation.setAttribute('aria-pressed', 'false');
+                setIndicator('normalActivation', false);
+                logAction('Normal Activation: Released');
+            }
+        };
         normalActivation.addEventListener('mousedown', normalActivationDown);
         normalActivation.addEventListener('mouseup', normalActivationUp);
-        normalActivation.addEventListener('touchstart', normalActivationDown);
-        normalActivation.addEventListener('touchend', normalActivationUp);
         normalActivation.addEventListener('mouseleave', normalActivationUp);
+        normalActivation.addEventListener('touchstart', normalActivationDown, { passive: true });
+        normalActivation.addEventListener('touchend', normalActivationUp);
 
-        // Timer Release Button
+        // 3. Timer Release Button
         const timerReleaseBtn = document.getElementById('timerRelease');
         const timerDurationInput = document.getElementById('timerDuration');
-        
         timerReleaseBtn.addEventListener('click', function() {
-            if (!this.classList.contains('pushed')) {
-                const duration = parseInt(timerDurationInput.value, 10) * 1000; // Convert to milliseconds
-                this.classList.add('pushed');
-                setIndicator('timerRelease', true);
-                logAction(`Timer Release: Activated (${timerDurationInput.value}s)`);
-                setTimeout(() => {
-                    this.classList.remove('pushed');
-                    setIndicator('timerRelease', false);
-                    logAction('Timer Release: Deactivated');
-                }, duration);
-            }
+            if (this.classList.contains('pushed')) return;
+            const duration = parseInt(timerDurationInput.value, 10) * 1000;
+            this.classList.add('pushed');
+            setIndicator('timerRelease', true);
+            logAction(`Timer Release: Activated for ${timerDurationInput.value}s`);
+            setTimeout(() => {
+                this.classList.remove('pushed');
+                setIndicator('timerRelease', false);
+                logAction('Timer Release: Deactivated (timer ended)');
+            }, duration);
         });
 
-        // Toggle Button
-        document.getElementById('toggleButton').addEventListener('click', function() {
+        // 4. Toggle Button & UI Toggle
+        const toggleButton = document.getElementById('toggleButton');
+        toggleButton.addEventListener('click', function() {
             this.classList.toggle('pushed');
             const isActive = this.classList.contains('pushed');
+            this.setAttribute('aria-checked', isActive);
             setIndicator('toggleButton', isActive);
-            logAction(`Toggle Button: ${isActive ? 'Activated' : 'Deactivated'}`);
+            logAction(`Toggle Button: State changed to ${isActive ? 'ON' : 'OFF'}`);
         });
 
-        // Double-Click Button
+        const uiToggle = document.getElementById('uiToggle');
+        uiToggle.addEventListener('change', function() {
+            const isActive = this.checked;
+            setIndicator('uiToggle', isActive);
+            logAction(`UI Toggle Switch: State changed to ${isActive ? 'ON' : 'OFF'}`);
+        });
+        
+        // 4.5 Checkbox
+        const uiCheckbox = document.getElementById('uiCheckbox');
+        uiCheckbox.addEventListener('change', function() {
+            const isActive = this.checked;
+            setIndicator('uiCheckbox', isActive);
+            logAction(`Standard Checkbox: State changed to ${isActive ? 'Checked' : 'Unchecked'}`);
+        });
+
+        // 5. Double-Click Button
         const doubleClickButton = document.getElementById('doubleClickButton');
         let lastClickTime = 0;
-        doubleClickButton.addEventListener('click', function() {
+        doubleClickButton.addEventListener('click', () => {
             const currentTime = new Date().getTime();
-            logAction('Double-Click: Single Click');
             if (currentTime - lastClickTime < 300) {
-                this.classList.add('pushed');
+                doubleClickButton.classList.add('pushed');
                 setIndicator('doubleClick', true);
                 logAction('Double-Click: Activated');
                 setTimeout(() => {
-                    this.classList.remove('pushed');
+                    doubleClickButton.classList.remove('pushed');
                     setIndicator('doubleClick', false);
-                    logAction('Double-Click: Deactivated');
+                    logAction('Double-Click: Deactivated (auto)');
                 }, 500);
+            } else {
+                 logAction('Double-Click: Single click registered.');
             }
             lastClickTime = currentTime;
         });
-
-        // Long Press Button
+        
+        // 6. Long Press Button
         const longPressButton = document.getElementById('longPressButton');
         let pressTimer;
-        function longPressStart(event) {
+        const longPressStart = (event) => {
             event.preventDefault();
             logAction('Long Press: Start');
             pressTimer = setTimeout(() => {
                 longPressButton.classList.add('pushed');
+                longPressButton.setAttribute('aria-pressed', 'true');
                 setIndicator('longPress', true);
-                logAction('Long Press: Activated');
-            }, 1000);
-        }
-        function longPressEnd() {
+                logAction('Long Press: Activated (threshold met)');
+            }, 800);
+        };
+        const longPressEnd = () => {
             clearTimeout(pressTimer);
             if (longPressButton.classList.contains('pushed')) {
                 longPressButton.classList.remove('pushed');
+                longPressButton.setAttribute('aria-pressed', 'false');
                 setIndicator('longPress', false);
-                logAction('Long Press: End (After Activation)');
+                logAction('Long Press: Released (after activation)');
             } else {
-                logAction('Long Press: End (Before Activation)');
+                logAction('Long Press: Released (before activation)');
             }
-        }
+        };
         longPressButton.addEventListener('mousedown', longPressStart);
-        longPressButton.addEventListener('touchstart', longPressStart);
+        longPressButton.addEventListener('touchstart', longPressStart, { passive: false });
         longPressButton.addEventListener('mouseup', longPressEnd);
-        longPressButton.addEventListener('touchend', longPressEnd);
         longPressButton.addEventListener('mouseleave', longPressEnd);
+        longPressButton.addEventListener('touchend', longPressEnd);
 
-        // Hover Activation Button
+        // 7. Hover Activation Button
         const hoverButton = document.getElementById('hoverButton');
         hoverButton.addEventListener('mouseenter', function() {
             this.classList.add('pushed');
             setIndicator('hover', true);
-            logAction('Hover: Mouse Enter');
+            logAction('Hover: Activated (mouse enter)');
         });
         hoverButton.addEventListener('mouseleave', function() {
             this.classList.remove('pushed');
             setIndicator('hover', false);
-            logAction('Hover: Mouse Leave');
+            logAction('Hover: Deactivated (mouse leave)');
         });
+        
+        // Initial log message
+        logAction("Tester initialized. Ready for interactions.");
     </script>
 </body>
 </html>
+
+
